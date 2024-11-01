@@ -4,8 +4,8 @@ import json
 import os
 
 # Define paths to the folders
-income_statement_folder = '/to/IncomeStatementStockData'  # Update this path
-stock_data_folder = '/to/StockData'                       # Update this path
+income_statement_folder = '/path/to/IncomeStatementStockData'  # Update this path
+stock_data_folder = '/path/to/StockData'                       # Update this path
 
 # Function to load JSON income statement file
 def load_income_statement(stock_name):
@@ -32,25 +32,26 @@ def load_stock_data(stock_name):
 # Function to interpret command and fetch data
 def fetch_data(command):
     command = command.lower().strip()
-    parts = command.split()
     
-    if len(parts) >= 3 and parts[0] == "import":
-        stock_name = parts[1].upper()
-        
-        if "income statement" in command:
-            st.write(f"Fetching Income Statement Data for {stock_name}")
-            income_df = load_income_statement(stock_name)
-            if income_df is not None:
-                st.write(income_df)
-        
-        elif "stock price" in command:
-            st.write(f"Fetching Stock Price Data for {stock_name}")
-            stock_df = load_stock_data(stock_name)
-            if stock_df is not None:
-                st.write(stock_df)
-        
-        else:
-            st.write("Invalid command. Use 'income statement' or 'stock price'.")
+    # Check if the command is for income statement data
+    if command.startswith("import") and "income statement" in command:
+        parts = command.split()
+        stock_name = parts[1].upper()  # Second word is the stock name
+        st.write(f"Fetching Income Statement Data for {stock_name}")
+        income_df = load_income_statement(stock_name)
+        if income_df is not None:
+            st.write(income_df)
+    
+    # Check if the command is for stock price data
+    elif command.startswith("import stock price of"):
+        parts = command.split()
+        stock_name = parts[-1].upper()  # Last word is the stock name
+        st.write(f"Fetching Stock Price Data for {stock_name}")
+        stock_df = load_stock_data(stock_name)
+        if stock_df is not None:
+            st.write(stock_df)
+    
+    # Handle invalid command format
     else:
         st.write("Invalid command format. Use 'import [stock_name] income statement' or 'import stock price of [stock_name]'.")
 
