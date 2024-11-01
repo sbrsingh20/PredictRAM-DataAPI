@@ -4,8 +4,8 @@ import json
 import os
 
 # Define paths to the folders
-income_statement_folder = '/path/to/IncomeStatementStockData'  # Update this path
-stock_data_folder = '/path/to/StockData'                       # Update this path
+income_statement_folder = 'IncomeStatementStockData'  # Update this path
+stock_data_folder = 'StockData'                       # Update this path
 
 # Function to load JSON income statement file
 def load_income_statement(stock_name):
