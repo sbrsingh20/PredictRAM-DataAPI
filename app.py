@@ -3,12 +3,12 @@ import pandas as pd
 import json
 
 # Load JSON file with Income Statement Data
-json_path = '/mnt/data/WSTCSTPAPR.json'  # Update path as necessary
+json_path = 'data/WSTCSTPAPR.json'  # Update path as necessary
 with open(json_path) as f:
     income_statement_data = json.load(f)
 
 # Load Excel file with Stock Data
-excel_path = '/mnt/data/ZEEMEDIA.NS_data.xlsx'  # Update path as necessary
+excel_path = 'data/ZEEMEDIA.NS_data.xlsx'  # Update path as necessary
 stock_data = pd.read_excel(excel_path)
 
 # Function to display data based on command
