@@ -53,7 +53,7 @@ def fetch_data(command):
     
     # Handle invalid command format
     else:
-        st.write("Invalid command format. Use 'import [stock_name] income statement' or 'import stock price of [stock_name]'.")
+        st.write("Invalid command format. Use 'import income statement of [stock_name]' or 'import stock price of [stock_name]'.")
 
 # Streamlit App Layout
 st.title("Stock Data Terminal")
