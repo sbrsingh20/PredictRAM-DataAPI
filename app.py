@@ -7,25 +7,32 @@ import os
 income_statement_folder = 'IncomeStatementStockData'  # Update this path
 stock_data_folder = 'StockData'                       # Update this path
 
+# Helper function to find a matching file name in a folder
+def find_file(folder_path, stock_name, extension):
+    for file_name in os.listdir(folder_path):
+        if file_name.lower() == f"{stock_name.lower()}.{extension}":
+            return os.path.join(folder_path, file_name)
+    return None
+
 # Function to load JSON income statement file
 def load_income_statement(stock_name):
-    try:
-        json_path = os.path.join(income_statement_folder, f"{stock_name}.json")
+    json_path = find_file(income_statement_folder, stock_name, "json")
+    if json_path:
         with open(json_path) as f:
             data = json.load(f)
         income_df = pd.DataFrame(data["IncomeStatement"])
         return income_df
-    except FileNotFoundError:
+    else:
         st.error(f"Income statement for '{stock_name}' not found.")
         return None
 
 # Function to load Excel stock data file
 def load_stock_data(stock_name):
-    try:
-        excel_path = os.path.join(stock_data_folder, f"{stock_name}.xlsx")
+    excel_path = find_file(stock_data_folder, stock_name, "xlsx")
+    if excel_path:
         stock_df = pd.read_excel(excel_path)
         return stock_df
-    except FileNotFoundError:
+    else:
         st.error(f"Stock data for '{stock_name}' not found.")
         return None
 
@@ -34,9 +41,9 @@ def fetch_data(command):
     command = command.lower().strip()
     
     # Check if the command is for income statement data
-    if command.startswith("import") and "income statement" in command:
+    if command.startswith("import income statement of"):
         parts = command.split()
-        stock_name = parts[1].upper()  # Second word is the stock name
+        stock_name = parts[-1].upper()  # Last word is the stock name
         st.write(f"Fetching Income Statement Data for {stock_name}")
         income_df = load_income_statement(stock_name)
         if income_df is not None:
@@ -57,7 +64,7 @@ def fetch_data(command):
 
 # Streamlit App Layout
 st.title("Stock Data Terminal")
-st.write("Enter command to fetch data (e.g., 'import TCS income statement' or 'import stock price of TCS').")
+st.write("Enter command to fetch data (e.g., 'import income statement of TCS' or 'import stock price of TCS').")
 
 # Text input for command
 command = st.text_input("Command")
