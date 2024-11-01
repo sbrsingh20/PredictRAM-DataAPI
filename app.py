@@ -7,34 +7,39 @@ import os
 income_statement_folder = 'IncomeStatementStockData'  # Update this path
 stock_data_folder = 'StockData'                       # Update this path
 
-# Helper function to find a matching file name in a folder
-def find_file(folder_path, stock_name, extension):
+# Helper function to find a matching file name in a folder based on a prefix match
+def find_file_by_prefix(folder_path, stock_name, extension=None):
     for file_name in os.listdir(folder_path):
-        if file_name.lower() == f"{stock_name.lower()}.{extension}":
-            return os.path.join(folder_path, file_name)
+        if file_name.lower().startswith(stock_name.lower()):
+            if extension is None or file_name.endswith(f".{extension}"):
+                return os.path.join(folder_path, file_name)
     return None
 
 # Function to load JSON income statement file
 def load_income_statement(stock_name):
-    json_path = find_file(income_statement_folder, stock_name, "json")
+    json_path = find_file_by_prefix(income_statement_folder, stock_name, "json")
     if json_path:
         with open(json_path) as f:
             data = json.load(f)
         income_df = pd.DataFrame(data["IncomeStatement"])
         return income_df
     else:
-        st.error(f"Income statement for '{stock_name}' not found.")
+        st.error(f"Income statement for '{stock_name}' not found. Available income statements: {', '.join(list_available_files(income_statement_folder, 'json'))}")
         return None
 
 # Function to load Excel stock data file
 def load_stock_data(stock_name):
-    excel_path = find_file(stock_data_folder, stock_name, "xlsx")
+    excel_path = find_file_by_prefix(stock_data_folder, stock_name, "xlsx")
     if excel_path:
         stock_df = pd.read_excel(excel_path)
         return stock_df
     else:
-        st.error(f"Stock data for '{stock_name}' not found.")
+        st.error(f"Stock data for '{stock_name}' not found. Available stock data: {', '.join(list_available_files(stock_data_folder, 'xlsx'))}")
         return None
+
+# Function to list available files in a folder with a specific extension
+def list_available_files(folder_path, extension):
+    return [file.split('.')[0] for file in os.listdir(folder_path) if file.endswith(f".{extension}")]
 
 # Function to interpret command and fetch data
 def fetch_data(command):
